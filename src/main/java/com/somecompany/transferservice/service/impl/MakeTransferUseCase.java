@@ -1,68 +1,80 @@
 package com.somecompany.transferservice.service.impl;
 
-import com.somecompany.transferservice.dto.BalanceValidationDTO;
-import com.somecompany.transferservice.dto.CurrencyConversionRequestDTO;
-import com.somecompany.transferservice.dto.MakeTransferRequestDTO;
-import com.somecompany.transferservice.dto.MakeTransferResultDTO;
-import com.somecompany.transferservice.exception.AccountNotFoundException;
+import com.somecompany.transferservice.dto.CurrencyConversionResultDto;
+import com.somecompany.transferservice.dto.transfer.BalanceValidationDto;
+import com.somecompany.transferservice.dto.transfer.CurrencyConversionRequestDto;
+import com.somecompany.transferservice.dto.transfer.MakeTransferRequestDto;
+import com.somecompany.transferservice.dto.transfer.MakeTransferResultDto;
 import com.somecompany.transferservice.exception.InsufficientBalanceException;
+import com.somecompany.transferservice.mapper.TransferMapper;
 import com.somecompany.transferservice.model.Account;
+import com.somecompany.transferservice.model.Transfer;
 import com.somecompany.transferservice.repository.AccountRepository;
+import com.somecompany.transferservice.repository.TransferRepository;
 import com.somecompany.transferservice.service.UseCase;
 import com.somecompany.transferservice.validator.impl.BalanceValidator;
 
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @Service
-public class MakeTransferUseCase implements UseCase<MakeTransferRequestDTO, MakeTransferResultDTO> {
+@AllArgsConstructor
+public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, MakeTransferResultDto> {
 
-    private final MakeCurrencyConversionUseCase conversionUseCase;
+    private final CurrencyConversionUseCase conversionUC;
+    private final GetAccountByUuidUseCase getAccountByUuidUC;
+    private final TransferMapper transferMapper;
+    private final TransferRepository transferRepository;
     private AccountRepository accountRepository;
     private final BalanceValidator balanceValidator;
 
-    public MakeTransferUseCase(MakeCurrencyConversionUseCase conversionUseCase, BalanceValidator balanceValidator) {
-        this.conversionUseCase = conversionUseCase;
-        this.balanceValidator = balanceValidator;
-    }
-
     @Override
-    public MakeTransferResultDTO execute(MakeTransferRequestDTO input) {
+    @Transactional
+    public MakeTransferResultDto execute(MakeTransferRequestDto input) {
 
-        Account originAccount = accountRepository.findByUuid(input.getOriginAccountUUID()).orElseThrow(() -> new AccountNotFoundException(String.format("No target account with UUID %s found.", input.getOriginAccountUUID())));
-        Account recipientAccount = accountRepository.findByUuid(input.getRecipientAccountUUID()).orElseThrow(() -> new AccountNotFoundException(String.format("No recipient account with UUID %s found.", input.getRecipientAccountUUID())));
-
-        BigDecimal transferAmount = input.getAmount();
+        Account originAccount = getAccountByUuidUC.execute(input.getOriginAccountUUID());
+        Account recipientAccount = getAccountByUuidUC.execute(input.getRecipientAccountUUID());
 
         String originCurrency = originAccount.getCurrency();
         String recipientCurrency = recipientAccount.getCurrency();
 
-        if (!originCurrency.equals(recipientCurrency)) {
-            transferAmount = conversionUseCase.execute(CurrencyConversionRequestDTO.builder()
+        boolean differentCurrencies = !originCurrency.equals(recipientCurrency);
+        BigDecimal deductFromOriginAcc;
+        BigDecimal creditToRecipientAcc;
+        if (differentCurrencies) {
+            CurrencyConversionResultDto convRes = conversionUC.execute(CurrencyConversionRequestDto.builder()
                     .fromCurrency(originCurrency)
                     .toCurrency(recipientCurrency)
-                    .amount(transferAmount)
+                    .inOriginCurrency(input.getInOriginCurrency())
+                    .amount(input.getAmount())
                     .build());
+            deductFromOriginAcc = convRes.getDeductFromOriginAcc();
+            creditToRecipientAcc = convRes.getCreditToRecipientAcc();
+        } else {
+            deductFromOriginAcc = input.getAmount();
+            creditToRecipientAcc = input.getAmount();
         }
 
-        balanceValidator.validate(BalanceValidationDTO.builder()
+        balanceValidator.validate(BalanceValidationDto.builder()
                     .account(originAccount)
-                    .transferAmount(transferAmount)
+                    .transferAmount(deductFromOriginAcc)
                     .build())
                 .ifPresent(errorMsg -> {
                     throw new InsufficientBalanceException(errorMsg);
                 });
 
-        originAccount.setBalance(originAccount.getBalance().subtract(transferAmount));
-        recipientAccount.setBalance(recipientAccount.getBalance().add(transferAmount));
+        originAccount.setBalance(originAccount.getBalance().subtract(deductFromOriginAcc));
+        recipientAccount.setBalance(recipientAccount.getBalance().add(creditToRecipientAcc));
+
+        Transfer transfer = transferMapper.makeTransferDtoToTransfer(recipientAccount, originAccount);
 
         accountRepository.save(originAccount);
         accountRepository.save(recipientAccount);
+        transferRepository.save(transfer);
 
-        return MakeTransferResultDTO.builder()
-                .originAccountBalance(originAccount.getBalance())
-                .recipientAccountBalance(recipientAccount.getBalance())
-                .build();
+        return new MakeTransferResultDto("Transfer performed successfully.", originAccount.getBalance(), recipientAccount.getBalance());
     }
 }

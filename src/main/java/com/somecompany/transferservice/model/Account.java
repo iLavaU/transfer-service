@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,17 +25,18 @@ public class Account {
 
     @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", insertable = false, updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_generator")
+    @SequenceGenerator(name = "account_generator", sequenceName = "accounts_SEQ", allocationSize = 1)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
     @Setter(AccessLevel.NONE)
-    @Column(name="uuid", insertable = false, updatable = false, nullable = false)
+    @Column(name="uuid", updatable = false, nullable = false, unique = true)
     private UUID uuid;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private Owner ownerId;
+    @JoinColumn(name = "owner_id", referencedColumnName = "uuid", nullable = false)
+    private Owner owner;
 
     @Column(name = "currency", nullable = false)
     private String currency;

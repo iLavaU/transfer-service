@@ -1,13 +1,15 @@
 package com.somecompany.transferservice.mapper;
 
-import com.somecompany.transferservice.dto.TransferDTO;
+import com.somecompany.transferservice.model.Account;
 import com.somecompany.transferservice.model.Transfer;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface TransferMapper {
+import java.time.LocalDateTime;
 
-    Transfer toTransfer(TransferDTO transferDTO);
-    TransferDTO toTransferDTO(Transfer transfer);
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, imports = LocalDateTime.class)
+public interface TransferMapper {
+    @Mapping(target = "transferDate", expression = "java(LocalDateTime.now())")
+    Transfer makeTransferDtoToTransfer(Account recipientAccount, Account originAccount);
 }

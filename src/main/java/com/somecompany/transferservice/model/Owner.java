@@ -5,9 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,9 +20,14 @@ public class Owner {
 
     @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "owner_generator")
+    @SequenceGenerator(name = "owner_generator", sequenceName = "owners_SEQ", allocationSize = 1)
     @Column(name = "id", insertable = false, updatable = false, nullable = false)
     private Long id;
+
+    @Setter(AccessLevel.NONE)
+    @Column(name="uuid", updatable = false, nullable = false, unique = true)
+    private UUID uuid;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -28,4 +37,9 @@ public class Owner {
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @PrePersist
+    protected void onCreate() {
+        this.uuid = UUID.randomUUID();
+    }
 }

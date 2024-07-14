@@ -1,13 +1,16 @@
 package com.somecompany.transferservice.client;
 
-import com.somecompany.transferservice.dto.OpenExchangeRatesLatestDTO;
+import com.somecompany.transferservice.dto.transfer.OpenExchangeRatesLatestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -21,24 +24,21 @@ public class OpenExchangeRatesAPIClient {
         this.apiKey = apiKey;
     }
 
-    public OpenExchangeRatesLatestDTO getLatestOpenExchangeRates() {
-
-        ResponseEntity<OpenExchangeRatesLatestDTO> entity = restClient.get()
+    public OpenExchangeRatesLatestDto getLatestOpenExchangeRates() {
+        return restClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("latest")
+                        .path("/latest.json")
                         .queryParam("app_id", apiKey)
                         .build()
                 )
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-
-                })
-                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-
-                })
-                .toEntity(OpenExchangeRatesLatestDTO.class);
-
-
-        return null;
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange((request, response) -> {
+                    if (response.getStatusCode().is4xxClientError()){
+                        throw new RuntimeException(); //TODO: complete.
+                    } else if (response.getStatusCode().is5xxServerError()) {
+                        throw new RuntimeException(); //TODO: complete.
+                    }
+                    return Objects.requireNonNull(response.bodyTo(OpenExchangeRatesLatestDto.class));
+                });
     }
 }

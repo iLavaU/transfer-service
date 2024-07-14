@@ -1,6 +1,6 @@
 package com.somecompany.transferservice.validator;
 
-import com.somecompany.transferservice.dto.BalanceValidationDTO;
+import com.somecompany.transferservice.dto.transfer.BalanceValidationDto;
 import com.somecompany.transferservice.model.Account;
 import com.somecompany.transferservice.validator.impl.BalanceValidator;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ public class BalanceValidatorTest {
     @Test
     public void testInsufficientBalance() {
         testAccount.setBalance(BigDecimal.valueOf(10));
-        Optional<String> result = this.balanceValidator.validate(BalanceValidationDTO.builder()
+        Optional<String> result = this.balanceValidator.validate(BalanceValidationDto.builder()
             .account(testAccount)
             .transferAmount(testTransferAmount)
             .build());
@@ -35,7 +35,7 @@ public class BalanceValidatorTest {
     @Test
     public void testSufficientBalanceGreaterBalance() {
         testAccount.setBalance(BigDecimal.valueOf(101));
-        Optional<String> result = this.balanceValidator.validate(BalanceValidationDTO.builder()
+        Optional<String> result = this.balanceValidator.validate(BalanceValidationDto.builder()
                 .account(testAccount)
                 .transferAmount(testTransferAmount)
                 .build());
@@ -45,7 +45,7 @@ public class BalanceValidatorTest {
     @Test
     public void testSufficientBalanceEqualBalance() {
         testAccount.setBalance(BigDecimal.valueOf(100));
-        Optional<String> result = this.balanceValidator.validate(BalanceValidationDTO.builder()
+        Optional<String> result = this.balanceValidator.validate(BalanceValidationDto.builder()
                 .account(testAccount)
                 .transferAmount(testTransferAmount)
                 .build());

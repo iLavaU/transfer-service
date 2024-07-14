@@ -11,7 +11,7 @@ public class RestClientConfig {
     @Value("${open.exchange.rates.api.url}")
     private String openExchangeRatesApiUrl;
 
-    @Bean(name = "oerRestClient")
+    @Bean
     public RestClient oerRestClient() {
         return RestClient.builder()
                 .baseUrl(openExchangeRatesApiUrl)
