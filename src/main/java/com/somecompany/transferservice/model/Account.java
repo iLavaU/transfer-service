@@ -30,7 +30,6 @@ public class Account {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Setter(AccessLevel.NONE)
     @Column(name="uuid", updatable = false, nullable = false, unique = true)
     private UUID uuid;
 

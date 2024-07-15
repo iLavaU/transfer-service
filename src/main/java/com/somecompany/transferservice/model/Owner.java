@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @Entity(name = "owners")
 public class Owner {
 
@@ -25,7 +27,6 @@ public class Owner {
     @Column(name = "id", insertable = false, updatable = false, nullable = false)
     private Long id;
 
-    @Setter(AccessLevel.NONE)
     @Column(name="uuid", updatable = false, nullable = false, unique = true)
     private UUID uuid;
 
