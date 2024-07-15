@@ -26,23 +26,26 @@ public class CurrencyConversionUseCase implements UseCase<CurrencyConversionRequ
         BigDecimal amount = input.getAmount();
         OpenExchangeRatesLatestDto oerDTO = oerClient.getLatestOpenExchangeRates();
 
-        BigDecimal fromValue = oerDTO.rates().computeIfPresent(input.getFromCurrency(), (k, v) -> v);
-        if (fromValue == null) {
-            throw new CurrencyNotListedInAPIException(input.getFromCurrency());
-        }
+        BigDecimal fromRate = getRate(oerDTO, input.getFromCurrency());
+        BigDecimal toRate = getRate(oerDTO, input.getToCurrency());
 
-        BigDecimal toValue = oerDTO.rates().computeIfPresent(input.getToCurrency(), (k, v) -> v);
-        if (toValue == null) {
-            throw new CurrencyNotListedInAPIException(input.getToCurrency());
-        }
-        CurrencyConversionResultDto resultDto = new CurrencyConversionResultDto();
+        BigDecimal deductFromOriginAcc;
+        BigDecimal creditToDestinyAcc;
         if (input.getInOriginCurrency()) {
-            resultDto.setDeductFromOriginAcc(input.getAmount());
-            resultDto.setCreditToRecipientAcc(amount.divide(fromValue, mathContext).multiply(toValue));
+            deductFromOriginAcc = input.getAmount();
+            creditToDestinyAcc = amount.divide(fromRate, mathContext).multiply(toRate);
         } else {
-            resultDto.setDeductFromOriginAcc(amount.divide(toValue, mathContext).multiply(fromValue));
-            resultDto.setCreditToRecipientAcc(input.getAmount());
+            deductFromOriginAcc = amount.divide(toRate, mathContext).multiply(fromRate);
+            creditToDestinyAcc = input.getAmount();
         }
-        return resultDto;
+        return new CurrencyConversionResultDto(deductFromOriginAcc, creditToDestinyAcc);
+    }
+
+    private static BigDecimal getRate(OpenExchangeRatesLatestDto oerDTO, String currency) {
+        BigDecimal rate = oerDTO.rates().computeIfPresent(currency, (k, v) -> v);
+        if (rate == null) {
+            throw new CurrencyNotListedInAPIException(currency);
+        }
+        return rate;
     }
 }

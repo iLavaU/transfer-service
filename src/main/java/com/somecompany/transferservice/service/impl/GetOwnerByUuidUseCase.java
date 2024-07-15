@@ -17,6 +17,7 @@ public class GetOwnerByUuidUseCase implements UseCase<UUID, Owner> {
 
     @Override
     public Owner execute(UUID input) {
-        return ownerRepository.findByUuid(input).orElseThrow(() -> new OwnerNotFoundException(String.format("Owner with uuid %s not found.", input)));
+        return ownerRepository.findByUuid(input).orElseThrow(() ->
+                new OwnerNotFoundException(String.format("Owner with uuid %s not found.", input)));
     }
 }

@@ -51,8 +51,8 @@ public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, Make
                     .inOriginCurrency(input.getInOriginCurrency())
                     .amount(input.getAmount())
                     .build());
-            deductFromOriginAcc = convRes.getDeductFromOriginAcc();
-            creditToRecipientAcc = convRes.getCreditToRecipientAcc();
+            deductFromOriginAcc = convRes.deductFromOriginAcc();
+            creditToRecipientAcc = convRes.creditToRecipientAcc();
         } else {
             deductFromOriginAcc = input.getAmount();
             creditToRecipientAcc = input.getAmount();
