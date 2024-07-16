@@ -1,6 +1,8 @@
 package com.somecompany.transferservice.exception;
 
 import com.somecompany.transferservice.dto.response.ClientErrorResponseDto;
+import com.somecompany.transferservice.dto.response.ServerErrorResponseDto;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -40,11 +42,18 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = OerApiLatestException.class)
-    public ResponseEntity<ClientErrorResponseDto> handleOerApiLatestException(OerApiLatestException ex, WebRequest request) {
-        ClientErrorResponseDto clientErrorResponseDto = new ClientErrorResponseDto();
-        clientErrorResponseDto.setMessage("Error calling Open Exchange Rates API. Please try again later.");
-        clientErrorResponseDto.setDetail(ex.getMessage());
-        return new ResponseEntity<>(clientErrorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ServerErrorResponseDto> handleOerApiLatestException(OerApiLatestException ex, WebRequest request) {
+        ServerErrorResponseDto serverErrorResponseDto = new ServerErrorResponseDto();
+        serverErrorResponseDto.setMessage("Error calling Open Exchange Rates API. Please try again later.");
+        serverErrorResponseDto.setDetail(ex.getMessage());
+        return new ResponseEntity<>(serverErrorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = CannotAcquireLockException.class)
+    public ResponseEntity<ServerErrorResponseDto> handleLockException(CannotAcquireLockException ex, WebRequest request) {
+        ServerErrorResponseDto serverErrorResponseDto = new ServerErrorResponseDto();
+        serverErrorResponseDto.setDetail("Server busy. Retry transaction later.");
+        return new ResponseEntity<>(serverErrorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
