@@ -6,11 +6,13 @@ import com.somecompany.transferservice.dto.request.CurrencyConversionRequestDto;
 import com.somecompany.transferservice.dto.OpenExchangeRatesLatestDto;
 import com.somecompany.transferservice.exception.CurrencyNotListedInAPIException;
 import com.somecompany.transferservice.service.UseCase;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 
+@Slf4j
 @Service
 public class CurrencyConversionUseCase implements UseCase<CurrencyConversionRequestDto, CurrencyConversionResultDto> {
 
@@ -29,6 +31,8 @@ public class CurrencyConversionUseCase implements UseCase<CurrencyConversionRequ
         BigDecimal fromRate = getRate(oerDTO, input.getFromCurrency());
         BigDecimal toRate = getRate(oerDTO, input.getToCurrency());
 
+        log.info("Performing currency conversion for amount {} from currency {} to currency {}",
+                amount, input.getFromCurrency(), input.getToCurrency());
         BigDecimal deductFromOriginAcc;
         BigDecimal creditToDestinyAcc;
         if (input.getInOriginCurrency()) {

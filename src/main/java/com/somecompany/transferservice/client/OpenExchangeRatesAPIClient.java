@@ -1,6 +1,7 @@
 package com.somecompany.transferservice.client;
 
 import com.somecompany.transferservice.dto.OpenExchangeRatesLatestDto;
+import com.somecompany.transferservice.exception.OerApiLatestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ public class OpenExchangeRatesAPIClient {
     }
 
     public OpenExchangeRatesLatestDto getLatestOpenExchangeRates() {
+        log.info("Getting latest exchange rates from Open Exchange Rates API.");
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/latest.json")
@@ -31,11 +33,10 @@ public class OpenExchangeRatesAPIClient {
                 )
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange((request, response) -> {
-                    if (response.getStatusCode().is4xxClientError()){
-                        throw new RuntimeException(); //TODO: complete.
-                    } else if (response.getStatusCode().is5xxServerError()) {
-                        throw new RuntimeException(); //TODO: complete.
+                    if (response.getStatusCode().is4xxClientError() || response.getStatusCode().is5xxServerError()){
+                        throw new OerApiLatestException(response.getStatusCode());
                     }
+                    log.info("Succesfully retrieved OER rates.");
                     return Objects.requireNonNull(response.bodyTo(OpenExchangeRatesLatestDto.class));
                 });
     }

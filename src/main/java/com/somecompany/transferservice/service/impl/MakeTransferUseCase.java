@@ -16,10 +16,12 @@ import com.somecompany.transferservice.validator.impl.BalanceValidator;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, MakeTransferResultDto> {
@@ -45,6 +47,7 @@ public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, Make
         BigDecimal deductFromOriginAcc;
         BigDecimal creditToRecipientAcc;
         if (differentCurrencies) {
+            log.info("Different currencies detected.");
             CurrencyConversionResultDto convRes = conversionUC.execute(CurrencyConversionRequestDto.builder()
                     .fromCurrency(originCurrency)
                     .toCurrency(recipientCurrency)
@@ -58,6 +61,7 @@ public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, Make
             creditToRecipientAcc = input.getAmount();
         }
 
+        log.info("Validating account balance...");
         balanceValidator.validate(BalanceValidationDto.builder()
                     .account(originAccount)
                     .transferAmount(deductFromOriginAcc)

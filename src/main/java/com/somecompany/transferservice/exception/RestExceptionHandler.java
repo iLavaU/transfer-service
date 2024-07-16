@@ -39,6 +39,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(clientErrorResponseDto, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = OerApiLatestException.class)
+    public ResponseEntity<ClientErrorResponseDto> handleOerApiLatestException(OerApiLatestException ex, WebRequest request) {
+        ClientErrorResponseDto clientErrorResponseDto = new ClientErrorResponseDto();
+        clientErrorResponseDto.setMessage("Error calling Open Exchange Rates API. Please try again later.");
+        clientErrorResponseDto.setDetail(ex.getMessage());
+        return new ResponseEntity<>(clientErrorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ClientErrorResponseDto clientErrorResponseDto = new ClientErrorResponseDto();
