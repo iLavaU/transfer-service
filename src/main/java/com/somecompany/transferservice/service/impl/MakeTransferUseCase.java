@@ -30,7 +30,7 @@ public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, Make
     private final GetAccountByUuidUseCase getAccountByUuidUC;
     private final TransferMapper transferMapper;
     private final TransferRepository transferRepository;
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
     private final BalanceValidator balanceValidator;
 
     @Override
