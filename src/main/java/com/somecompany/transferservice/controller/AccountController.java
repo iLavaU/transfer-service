@@ -23,7 +23,7 @@ public class AccountController {
     private CreateAccountUseCase createAccountUseCase;
     private AccountMapper accountMapper;
 
-    @PostMapping("/create")
+    @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<BaseResponseDto<AccountDto>> createAccount(@RequestBody @Validated AccountCreationDto dto) {
         Account acc = createAccountUseCase.execute(dto);
         return new ResponseEntity<>(new BaseResponseDto<>(accountMapper.accountToAccountDto(acc)), HttpStatus.CREATED);

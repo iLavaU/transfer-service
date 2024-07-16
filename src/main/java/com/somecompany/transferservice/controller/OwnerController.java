@@ -23,7 +23,7 @@ public class OwnerController {
     private CreateOwnerUseCase createOwnerUseCase;
     private OwnerMapper ownerMapper;
 
-    @PostMapping("/create")
+    @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<BaseResponseDto<OwnerDto>> createOwner(@RequestBody @Valid OwnerCreationDto dto) {
         Owner owner = createOwnerUseCase.execute(dto);
         return new ResponseEntity<>(new BaseResponseDto<>(ownerMapper.toOwnerDto(owner)), HttpStatus.CREATED);
