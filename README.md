@@ -22,14 +22,15 @@ In a similar way, the services are injected in the [controllers](src/main/java/c
 
 </div>
 
-
-<figure>
+<figure style="display: block; margin: auto;">
     <img alt="Clean architecture diagram" src="src/main/resources/static/clean-arch.png" width="400"/>
     <figcaption>Clean architecture diagram. Retrieved from <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">R. C. Martin’s Clean Architecture blog</a></figcaption>
 </figure>
 
+<br>
+
 <div style="text-align: justify"> 
-Some additional remarks:
+<h3>Some additional remarks:</h3>
 <ul>
     <li>Implemented an ExceptionHandler to standardize the returned dtos and http status.</li>
     <li>Getting latest exchange rates from Open Exchange Rates latest <a href="https://docs.openexchangerates.org/reference/latest-json">endpoint</a>.
