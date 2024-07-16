@@ -68,11 +68,7 @@ public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, Make
 
         originAccount.setBalance(originAccount.getBalance().subtract(deductFromOriginAcc));
         recipientAccount.setBalance(recipientAccount.getBalance().add(creditToRecipientAcc));
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         Transfer transfer = transferMapper.makeTransferDtoToTransfer(recipientAccount, originAccount);
 
         accountRepository.save(originAccount);
