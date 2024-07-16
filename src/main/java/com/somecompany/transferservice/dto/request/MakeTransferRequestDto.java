@@ -1,4 +1,4 @@
-package com.somecompany.transferservice.dto.transfer;
+package com.somecompany.transferservice.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,6 +14,7 @@ public class MakeTransferRequestDto {
     private UUID originAccountUUID;
     @NotNull
     private UUID recipientAccountUUID;
+    @NotNull
     @Positive
     private BigDecimal amount;
     private Boolean inOriginCurrency = true;

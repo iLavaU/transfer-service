@@ -1,6 +1,6 @@
 package com.somecompany.transferservice.validator.impl;
 
-import com.somecompany.transferservice.dto.transfer.BalanceValidationDto;
+import com.somecompany.transferservice.dto.BalanceValidationDto;
 import com.somecompany.transferservice.validator.ConditionValidator;
 import org.springframework.stereotype.Component;
 

@@ -2,8 +2,8 @@ package com.somecompany.transferservice.service;
 
 import com.somecompany.transferservice.TestDataUtil;
 import com.somecompany.transferservice.client.OpenExchangeRatesAPIClient;
-import com.somecompany.transferservice.dto.transfer.MakeTransferRequestDto;
-import com.somecompany.transferservice.dto.transfer.MakeTransferResultDto;
+import com.somecompany.transferservice.dto.request.MakeTransferRequestDto;
+import com.somecompany.transferservice.dto.response.MakeTransferResultDto;
 import com.somecompany.transferservice.exception.InsufficientBalanceException;
 import com.somecompany.transferservice.mapper.TransferMapperImpl;
 import com.somecompany.transferservice.repository.AccountRepository;
@@ -12,7 +12,6 @@ import com.somecompany.transferservice.service.impl.CurrencyConversionUseCase;
 import com.somecompany.transferservice.service.impl.GetAccountByUuidUseCase;
 import com.somecompany.transferservice.service.impl.MakeTransferUseCase;
 import com.somecompany.transferservice.validator.impl.BalanceValidator;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,16 +51,16 @@ public class MakeTransferUseCaseTest {
         conversionUC = new CurrencyConversionUseCase(oerClient);
         makeTransferUseCase = new MakeTransferUseCase(conversionUC, getAccountByUuidUC, transferMapper, transferRepository, accountRepository, balanceValidator);
         testDataUtil = new TestDataUtil();
-        when(getAccountByUuidUC.execute(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID)).thenReturn(testDataUtil.TEST_ACCOUNT_OWNER_1);
-        when(getAccountByUuidUC.execute(testDataUtil.TEST_ACCOUNT_OWNER_2_UUID)).thenReturn(testDataUtil.TEST_ACCOUNT_OWNER_2);
+        when(getAccountByUuidUC.execute(testDataUtil.TEST_ACCOUNT_1_UUID)).thenReturn(testDataUtil.TEST_ACCOUNT_OWNER_1);
+        when(getAccountByUuidUC.execute(testDataUtil.TEST_ACCOUNT_2_UUID)).thenReturn(testDataUtil.TEST_ACCOUNT_OWNER_2);
     }
 
     @Test
     void makeTransferDiffCurrenciesInOriginCurrency() {
         testDataUtil.TEST_ACCOUNT_OWNER_1.setBalance(BigDecimal.valueOf(100));
         MakeTransferRequestDto requestDto = new MakeTransferRequestDto();
-        requestDto.setOriginAccountUUID(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID);
-        requestDto.setRecipientAccountUUID(testDataUtil.TEST_ACCOUNT_OWNER_2_UUID);
+        requestDto.setOriginAccountUUID(testDataUtil.TEST_ACCOUNT_1_UUID);
+        requestDto.setRecipientAccountUUID(testDataUtil.TEST_ACCOUNT_2_UUID);
         requestDto.setAmount(testDataUtil.AMOUNT);
 
         when(oerClient.getLatestOpenExchangeRates()).thenReturn(testDataUtil.OER_RESULT_DTO);
@@ -75,8 +74,8 @@ public class MakeTransferUseCaseTest {
     void makeTransferDiffCurrenciesNotInOriginCurrency() {
         testDataUtil.TEST_ACCOUNT_OWNER_1.setBalance(BigDecimal.valueOf(100));
         MakeTransferRequestDto requestDto = new MakeTransferRequestDto();
-        requestDto.setOriginAccountUUID(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID);
-        requestDto.setRecipientAccountUUID(testDataUtil.TEST_ACCOUNT_OWNER_2_UUID);
+        requestDto.setOriginAccountUUID(testDataUtil.TEST_ACCOUNT_1_UUID);
+        requestDto.setRecipientAccountUUID(testDataUtil.TEST_ACCOUNT_2_UUID);
         requestDto.setInOriginCurrency(false);
         requestDto.setAmount(testDataUtil.AMOUNT);
 
@@ -92,8 +91,8 @@ public class MakeTransferUseCaseTest {
         testDataUtil.TEST_ACCOUNT_OWNER_1.setBalance(BigDecimal.valueOf(100));
         testDataUtil.TEST_ACCOUNT_OWNER_2.setCurrency("EUR");
         MakeTransferRequestDto requestDto = new MakeTransferRequestDto();
-        requestDto.setOriginAccountUUID(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID);
-        requestDto.setRecipientAccountUUID(testDataUtil.TEST_ACCOUNT_OWNER_2_UUID);
+        requestDto.setOriginAccountUUID(testDataUtil.TEST_ACCOUNT_1_UUID);
+        requestDto.setRecipientAccountUUID(testDataUtil.TEST_ACCOUNT_2_UUID);
         requestDto.setAmount(testDataUtil.AMOUNT);
 
         MakeTransferResultDto resultDto = makeTransferUseCase.execute(requestDto);
@@ -105,8 +104,8 @@ public class MakeTransferUseCaseTest {
     void makeTransferNotEnoughBalance() {
         testDataUtil.TEST_ACCOUNT_OWNER_1.setBalance(BigDecimal.valueOf(0));
         MakeTransferRequestDto requestDto = new MakeTransferRequestDto();
-        requestDto.setOriginAccountUUID(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID);
-        requestDto.setRecipientAccountUUID(testDataUtil.TEST_ACCOUNT_OWNER_2_UUID);
+        requestDto.setOriginAccountUUID(testDataUtil.TEST_ACCOUNT_1_UUID);
+        requestDto.setRecipientAccountUUID(testDataUtil.TEST_ACCOUNT_2_UUID);
         requestDto.setAmount(testDataUtil.AMOUNT);
 
         when(oerClient.getLatestOpenExchangeRates()).thenReturn(testDataUtil.OER_RESULT_DTO);

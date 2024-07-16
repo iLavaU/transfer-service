@@ -1,0 +1,7 @@
+{
+  "message": "Transfer performed successfully.",
+  "data": {
+    "originAccountBalance": 998,
+    "recipientAccountBalance": 1844.4916
+  }
+}

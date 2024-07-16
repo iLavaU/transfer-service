@@ -2,8 +2,8 @@ package com.somecompany.transferservice.service.impl;
 
 import com.somecompany.transferservice.client.OpenExchangeRatesAPIClient;
 import com.somecompany.transferservice.dto.CurrencyConversionResultDto;
-import com.somecompany.transferservice.dto.transfer.CurrencyConversionRequestDto;
-import com.somecompany.transferservice.dto.transfer.OpenExchangeRatesLatestDto;
+import com.somecompany.transferservice.dto.request.CurrencyConversionRequestDto;
+import com.somecompany.transferservice.dto.OpenExchangeRatesLatestDto;
 import com.somecompany.transferservice.exception.CurrencyNotListedInAPIException;
 import com.somecompany.transferservice.service.UseCase;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.somecompany.transferservice.dto.transfer;
+package com.somecompany.transferservice.dto;
 
 import com.somecompany.transferservice.model.Account;
 import lombok.Builder;

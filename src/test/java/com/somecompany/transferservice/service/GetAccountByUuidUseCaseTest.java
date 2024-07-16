@@ -35,16 +35,16 @@ public class GetAccountByUuidUseCaseTest {
 
     @Test
     void getAccountByUuidFound() {
-        when(accountRepository.findByUuid(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID)).thenReturn(Optional.of(testDataUtil.TEST_ACCOUNT_OWNER_1));
-        Account account = getAccountByUuidUC.execute(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID);
+        when(accountRepository.findByUuid(testDataUtil.TEST_ACCOUNT_1_UUID)).thenReturn(Optional.of(testDataUtil.TEST_ACCOUNT_OWNER_1));
+        Account account = getAccountByUuidUC.execute(testDataUtil.TEST_ACCOUNT_1_UUID);
         assertEquals("EUR", account.getCurrency());
     }
 
     @Test
     void getAccountByUuidNotFound() {
-        when(accountRepository.findByUuid(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID)).thenReturn(Optional.empty());
-        AccountNotFoundException ex = assertThrows(AccountNotFoundException.class, () -> getAccountByUuidUC.execute(testDataUtil.TEST_ACCOUNT_OWNER_1_UUID));
-        assertEquals(String.format("No account with UUID %s found.", testDataUtil.TEST_ACCOUNT_OWNER_1_UUID), ex.getMessage());
+        when(accountRepository.findByUuid(testDataUtil.TEST_ACCOUNT_1_UUID)).thenReturn(Optional.empty());
+        AccountNotFoundException ex = assertThrows(AccountNotFoundException.class, () -> getAccountByUuidUC.execute(testDataUtil.TEST_ACCOUNT_1_UUID));
+        assertEquals(String.format("No account with UUID %s found.", testDataUtil.TEST_ACCOUNT_1_UUID), ex.getMessage());
     }
 
 }

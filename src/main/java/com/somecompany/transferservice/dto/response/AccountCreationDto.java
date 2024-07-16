@@ -1,4 +1,4 @@
-package com.somecompany.transferservice.dto.account;
+package com.somecompany.transferservice.dto.response;
 
 import com.somecompany.transferservice.annotation.ValidCurrency;
 import com.somecompany.transferservice.validator.ValidationOrder;

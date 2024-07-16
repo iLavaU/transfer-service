@@ -1,7 +1,7 @@
 package com.somecompany.transferservice.mapper;
 
-import com.somecompany.transferservice.dto.owner.OwnerCreationDto;
-import com.somecompany.transferservice.dto.owner.OwnerDto;
+import com.somecompany.transferservice.dto.response.OwnerCreationDto;
+import com.somecompany.transferservice.dto.OwnerDto;
 import com.somecompany.transferservice.model.Owner;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

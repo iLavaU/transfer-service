@@ -1,10 +1,10 @@
 package com.somecompany.transferservice.service.impl;
 
 import com.somecompany.transferservice.dto.CurrencyConversionResultDto;
-import com.somecompany.transferservice.dto.transfer.BalanceValidationDto;
-import com.somecompany.transferservice.dto.transfer.CurrencyConversionRequestDto;
-import com.somecompany.transferservice.dto.transfer.MakeTransferRequestDto;
-import com.somecompany.transferservice.dto.transfer.MakeTransferResultDto;
+import com.somecompany.transferservice.dto.BalanceValidationDto;
+import com.somecompany.transferservice.dto.request.CurrencyConversionRequestDto;
+import com.somecompany.transferservice.dto.request.MakeTransferRequestDto;
+import com.somecompany.transferservice.dto.response.MakeTransferResultDto;
 import com.somecompany.transferservice.exception.InsufficientBalanceException;
 import com.somecompany.transferservice.mapper.TransferMapper;
 import com.somecompany.transferservice.model.Account;
@@ -68,13 +68,17 @@ public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, Make
 
         originAccount.setBalance(originAccount.getBalance().subtract(deductFromOriginAcc));
         recipientAccount.setBalance(recipientAccount.getBalance().add(creditToRecipientAcc));
-
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         Transfer transfer = transferMapper.makeTransferDtoToTransfer(recipientAccount, originAccount);
 
         accountRepository.save(originAccount);
         accountRepository.save(recipientAccount);
         transferRepository.save(transfer);
 
-        return new MakeTransferResultDto("Transfer performed successfully.", originAccount.getBalance(), recipientAccount.getBalance());
+        return new MakeTransferResultDto(originAccount.getBalance(), recipientAccount.getBalance());
     }
 }

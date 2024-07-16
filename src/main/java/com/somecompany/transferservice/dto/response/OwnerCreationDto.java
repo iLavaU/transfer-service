@@ -1,4 +1,4 @@
-package com.somecompany.transferservice.dto.owner;
+package com.somecompany.transferservice.dto.response;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

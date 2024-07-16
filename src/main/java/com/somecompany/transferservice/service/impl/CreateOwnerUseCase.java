@@ -1,6 +1,6 @@
 package com.somecompany.transferservice.service.impl;
 
-import com.somecompany.transferservice.dto.owner.OwnerCreationDto;
+import com.somecompany.transferservice.dto.response.OwnerCreationDto;
 import com.somecompany.transferservice.mapper.OwnerMapper;
 import com.somecompany.transferservice.model.Owner;
 import com.somecompany.transferservice.repository.OwnerRepository;

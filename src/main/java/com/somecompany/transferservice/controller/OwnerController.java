@@ -1,7 +1,8 @@
 package com.somecompany.transferservice.controller;
 
-import com.somecompany.transferservice.dto.owner.OwnerCreationDto;
-import com.somecompany.transferservice.dto.owner.OwnerDto;
+import com.somecompany.transferservice.dto.response.OwnerCreationDto;
+import com.somecompany.transferservice.dto.OwnerDto;
+import com.somecompany.transferservice.dto.response.BaseResponseDto;
 import com.somecompany.transferservice.mapper.OwnerMapper;
 import com.somecompany.transferservice.model.Owner;
 import com.somecompany.transferservice.service.impl.CreateOwnerUseCase;
@@ -23,8 +24,8 @@ public class OwnerController {
     private OwnerMapper ownerMapper;
 
     @PostMapping("/create")
-    public ResponseEntity<OwnerDto> createOwner(@RequestBody @Valid OwnerCreationDto dto) {
+    public ResponseEntity<BaseResponseDto<OwnerDto>> createOwner(@RequestBody @Valid OwnerCreationDto dto) {
         Owner owner = createOwnerUseCase.execute(dto);
-        return new ResponseEntity<>(ownerMapper.toOwnerDto(owner), HttpStatus.CREATED);
+        return new ResponseEntity<>(new BaseResponseDto<>(ownerMapper.toOwnerDto(owner)), HttpStatus.CREATED);
     }
 }

@@ -1,7 +1,4 @@
-package com.somecompany.transferservice.dto.transfer;
-
-import lombok.Builder;
-import lombok.Getter;
+package com.somecompany.transferservice.dto;
 
 import java.math.BigDecimal;
 import java.util.Map;

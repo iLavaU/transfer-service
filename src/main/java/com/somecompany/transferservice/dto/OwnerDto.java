@@ -1,4 +1,4 @@
-package com.somecompany.transferservice.dto.owner;
+package com.somecompany.transferservice.dto;
 
 import java.io.Serializable;
 import java.util.UUID;

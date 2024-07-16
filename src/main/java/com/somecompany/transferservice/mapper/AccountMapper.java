@@ -1,7 +1,7 @@
 package com.somecompany.transferservice.mapper;
 
-import com.somecompany.transferservice.dto.account.AccountCreationDto;
-import com.somecompany.transferservice.dto.account.AccountDto;
+import com.somecompany.transferservice.dto.response.AccountCreationDto;
+import com.somecompany.transferservice.dto.request.AccountDto;
 import com.somecompany.transferservice.model.Account;
 import com.somecompany.transferservice.model.Owner;
 import org.mapstruct.Mapper;
@@ -12,6 +12,9 @@ import org.mapstruct.MappingConstants;
 public interface AccountMapper {
     @Mapping(target = "ownerId", source = "owner.uuid")
     AccountDto accountToAccountDto(Account account);
+
+    @Mapping(target = "uuid", ignore = true)
+    @Mapping(target = "owner", source = "owner")
     @Mapping(target = "balance", constant = "0")
-    Account accountCreationDtoToAccount(AccountCreationDto accountCreationDto, Owner owner);
+    Account accountCreationDtoToAccount(AccountCreationDto creationDto, Owner owner);
 }

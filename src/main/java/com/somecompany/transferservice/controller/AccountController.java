@@ -1,7 +1,8 @@
 package com.somecompany.transferservice.controller;
 
-import com.somecompany.transferservice.dto.account.AccountCreationDto;
-import com.somecompany.transferservice.dto.account.AccountDto;
+import com.somecompany.transferservice.dto.response.AccountCreationDto;
+import com.somecompany.transferservice.dto.request.AccountDto;
+import com.somecompany.transferservice.dto.response.BaseResponseDto;
 import com.somecompany.transferservice.mapper.AccountMapper;
 import com.somecompany.transferservice.model.Account;
 import com.somecompany.transferservice.service.impl.CreateAccountUseCase;
@@ -23,8 +24,8 @@ public class AccountController {
     private AccountMapper accountMapper;
 
     @PostMapping("/create")
-    public ResponseEntity<AccountDto> createAccount(@RequestBody @Validated AccountCreationDto dto) {
+    public ResponseEntity<BaseResponseDto<AccountDto>> createAccount(@RequestBody @Validated AccountCreationDto dto) {
         Account acc = createAccountUseCase.execute(dto);
-        return new ResponseEntity<>(accountMapper.accountToAccountDto(acc), HttpStatus.CREATED);
+        return new ResponseEntity<>(new BaseResponseDto<>(accountMapper.accountToAccountDto(acc)), HttpStatus.CREATED);
     }
 }

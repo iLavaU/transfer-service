@@ -1,7 +1,8 @@
 package com.somecompany.transferservice.controller;
 
-import com.somecompany.transferservice.dto.transfer.MakeTransferRequestDto;
-import com.somecompany.transferservice.dto.transfer.MakeTransferResultDto;
+import com.somecompany.transferservice.dto.request.MakeTransferRequestDto;
+import com.somecompany.transferservice.dto.response.BaseResponseDto;
+import com.somecompany.transferservice.dto.response.MakeTransferResultDto;
 import com.somecompany.transferservice.service.impl.MakeTransferUseCase;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class TransferController {
     private final MakeTransferUseCase makeTransferUseCase;
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<MakeTransferResultDto> transfer(@RequestBody @Valid MakeTransferRequestDto makeTransferRequestDTO) {
-        return ResponseEntity.accepted().body(makeTransferUseCase.execute(makeTransferRequestDTO));
+    public ResponseEntity<BaseResponseDto<MakeTransferResultDto>> transfer(@RequestBody @Valid MakeTransferRequestDto makeTransferRequestDTO) {
+        return ResponseEntity.ok().body(new BaseResponseDto<>("Transfer performed successfully.",makeTransferUseCase.execute(makeTransferRequestDTO)));
     }
 }

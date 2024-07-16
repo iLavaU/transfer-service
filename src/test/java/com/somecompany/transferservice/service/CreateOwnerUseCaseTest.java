@@ -1,7 +1,7 @@
 package com.somecompany.transferservice.service;
 
 import com.somecompany.transferservice.TestDataUtil;
-import com.somecompany.transferservice.dto.owner.OwnerCreationDto;
+import com.somecompany.transferservice.dto.response.OwnerCreationDto;
 import com.somecompany.transferservice.mapper.OwnerMapperImpl;
 import com.somecompany.transferservice.model.Owner;
 import com.somecompany.transferservice.repository.OwnerRepository;

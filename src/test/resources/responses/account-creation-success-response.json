@@ -1,0 +1,8 @@
+{ "message": "Success when processing request.",
+  "data": {
+    "uuid": "beb15528-4348-4201-aca5-f2e2c9a09bfb",
+    "ownerId": "e2280ab6-c1e1-450b-8d53-c7698d12abfb",
+    "currency": "EUR",
+    "balance": 0
+  }
+}

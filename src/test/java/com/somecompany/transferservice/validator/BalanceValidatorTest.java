@@ -1,6 +1,6 @@
 package com.somecompany.transferservice.validator;
 
-import com.somecompany.transferservice.dto.transfer.BalanceValidationDto;
+import com.somecompany.transferservice.dto.BalanceValidationDto;
 import com.somecompany.transferservice.model.Account;
 import com.somecompany.transferservice.validator.impl.BalanceValidator;
 import org.junit.jupiter.api.Test;

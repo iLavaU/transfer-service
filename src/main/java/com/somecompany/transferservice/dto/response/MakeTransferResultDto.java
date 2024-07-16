@@ -1,9 +1,8 @@
-package com.somecompany.transferservice.dto.transfer;
+package com.somecompany.transferservice.dto.response;
 
 import java.math.BigDecimal;
 
 public record MakeTransferResultDto (
-    String message,
     BigDecimal originAccountBalance,
     BigDecimal recipientAccountBalance
 ) {}

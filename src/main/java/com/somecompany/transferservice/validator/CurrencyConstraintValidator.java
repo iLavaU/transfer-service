@@ -22,10 +22,14 @@ public class CurrencyConstraintValidator implements ConstraintValidator<ValidCur
     public boolean isValid(String currency, ConstraintValidatorContext constraintValidatorContext) {
         boolean isValid = currencies.contains(currency.toUpperCase());
         if (!isValid) {
-            constraintValidatorContext.disableDefaultConstraintViolation();
-            constraintValidatorContext.buildConstraintViolationWithTemplate(String.format("Currency %s not existent.", currency))
-                    .addConstraintViolation();
+            addConstraintViolation(constraintValidatorContext, currency);
         }
         return isValid;
+    }
+
+    public void addConstraintViolation(ConstraintValidatorContext constraintValidatorContext, String currency) {
+        constraintValidatorContext.disableDefaultConstraintViolation();
+        constraintValidatorContext.buildConstraintViolationWithTemplate(String.format("Currency %s not existent.", currency))
+                .addConstraintViolation();
     }
 }

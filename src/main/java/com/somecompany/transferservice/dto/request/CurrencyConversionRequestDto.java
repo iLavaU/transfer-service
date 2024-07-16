@@ -1,4 +1,4 @@
-package com.somecompany.transferservice.dto.transfer;
+package com.somecompany.transferservice.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -3,7 +3,7 @@ package com.somecompany.transferservice.service;
 import com.somecompany.transferservice.TestDataUtil;
 import com.somecompany.transferservice.client.OpenExchangeRatesAPIClient;
 import com.somecompany.transferservice.dto.CurrencyConversionResultDto;
-import com.somecompany.transferservice.dto.transfer.CurrencyConversionRequestDto;
+import com.somecompany.transferservice.dto.request.CurrencyConversionRequestDto;
 import com.somecompany.transferservice.service.impl.CurrencyConversionUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
