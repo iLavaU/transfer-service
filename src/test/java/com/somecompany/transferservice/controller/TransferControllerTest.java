@@ -3,6 +3,7 @@ package com.somecompany.transferservice.controller;
 import com.somecompany.transferservice.TestDataUtil;
 import com.somecompany.transferservice.dto.response.MakeTransferResultDto;
 import com.somecompany.transferservice.service.impl.MakeTransferUseCase;
+import com.somecompany.transferservice.service.impl.ScheduleTransferUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,12 +34,14 @@ public class TransferControllerTest {
 
     @Mock
     MakeTransferUseCase uc;
+    @Mock
+    ScheduleTransferUseCase scheduleTransferUc;
     TestDataUtil testDataUtil;
 
     @BeforeEach
     void setUp() {
         testDataUtil = new TestDataUtil();
-        transferController = new TransferController(uc);
+        transferController = new TransferController(uc, scheduleTransferUc);
         this.mockMvc = MockMvcBuilders.standaloneSetup(transferController).build();
     }
 
@@ -51,7 +54,7 @@ public class TransferControllerTest {
                     input.getInOriginCurrency() &&
                     input.getAmount().equals(BigDecimal.ONE))))
                 .thenReturn(new MakeTransferResultDto(BigDecimal.valueOf(998), BigDecimal.valueOf(1844.4916)));
-        this.mockMvc.perform(post("/transfer")
+        this.mockMvc.perform(post("/transfer/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andDo(print())
@@ -63,7 +66,7 @@ public class TransferControllerTest {
     void makeTransferBadReq() throws Exception {
         String requestBody = Files.readString(Path.of("src/test/resources/requests/make-transfer-request-bad.json"), StandardCharsets.UTF_8);
 
-        this.mockMvc.perform(post("/transfer")
+        this.mockMvc.perform(post("/transfer/v1")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(requestBody))
             .andDo(print())

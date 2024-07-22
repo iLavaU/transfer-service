@@ -1,6 +1,6 @@
 CREATE SEQUENCE IF NOT EXISTS accounts_seq START WITH 1 INCREMENT BY 1;
 
-CREATE SEQUENCE IF NOT EXISTS owners_seq  START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE IF NOT EXISTS owners_seq START WITH 1 INCREMENT BY 1;
 
 CREATE SEQUENCE IF NOT EXISTS transfers_seq START WITH 1 INCREMENT BY 1;
 
@@ -26,13 +26,19 @@ CREATE TABLE owners
 
 CREATE TABLE transfers
 (
-    id                   BIGINT                      NOT NULL,
-    uuid                 UUID                        NOT NULL,
-    recipient_account_id BIGINT                      NOT NULL,
-    origin_account_id    BIGINT                      NOT NULL,
-    transfer_date        TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    id                                  BIGINT  NOT NULL,
+    uuid                                UUID    NOT NULL,
+    amount_transferred_from_origin_acc  DECIMAL NOT NULL,
+    amount_transferred_to_recipient_acc DECIMAL NOT NULL,
+    recipient_account_id                UUID    NOT NULL,
+    origin_account_id                   UUID    NOT NULL,
+    transfer_date                       TIMESTAMP WITHOUT TIME ZONE,
+    status                              VARCHAR(255),
     CONSTRAINT pk_transfers PRIMARY KEY (id)
 );
+
+ALTER TABLE accounts
+    ADD CONSTRAINT uc_accounts_owner UNIQUE (owner_id);
 
 ALTER TABLE accounts
     ADD CONSTRAINT uc_accounts_uuid UNIQUE (uuid);
@@ -47,7 +53,7 @@ ALTER TABLE accounts
     ADD CONSTRAINT FK_ACCOUNTS_ON_OWNER FOREIGN KEY (owner_id) REFERENCES owners (uuid);
 
 ALTER TABLE transfers
-    ADD CONSTRAINT FK_TRANSFERS_ON_ORIGIN_ACCOUNT FOREIGN KEY (origin_account_id) REFERENCES accounts (id);
+    ADD CONSTRAINT FK_TRANSFERS_ON_ORIGIN_ACCOUNT FOREIGN KEY (origin_account_id) REFERENCES accounts (uuid);
 
 ALTER TABLE transfers
-    ADD CONSTRAINT FK_TRANSFERS_ON_RECIPIENT_ACCOUNT FOREIGN KEY (recipient_account_id) REFERENCES accounts (id);
+    ADD CONSTRAINT FK_TRANSFERS_ON_RECIPIENT_ACCOUNT FOREIGN KEY (recipient_account_id) REFERENCES accounts (uuid);

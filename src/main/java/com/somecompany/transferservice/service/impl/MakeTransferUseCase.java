@@ -9,6 +9,7 @@ import com.somecompany.transferservice.exception.InsufficientBalanceException;
 import com.somecompany.transferservice.mapper.TransferMapper;
 import com.somecompany.transferservice.model.Account;
 import com.somecompany.transferservice.model.Transfer;
+import com.somecompany.transferservice.model.TransferStatus;
 import com.somecompany.transferservice.repository.AccountRepository;
 import com.somecompany.transferservice.repository.TransferRepository;
 import com.somecompany.transferservice.service.UseCase;
@@ -37,12 +38,49 @@ public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, Make
     @Transactional
     public MakeTransferResultDto execute(MakeTransferRequestDto input) {
 
+        Accounts accounts = getOriginAndDestinationAccounts(input);
+        Amounts amounts = getAmounts(input, accounts.originAccount().getCurrency(), accounts.recipientAccount().getCurrency());
+
+        Transfer transfer = transferMapper.makeTransferDtoToTransfer(accounts.recipientAccount(), accounts.originAccount(),
+                null, null);
+        log.info("Validating account balance...");
+        balanceValidator.validate(BalanceValidationDto.builder()
+                    .account(accounts.originAccount())
+                    .transferAmount(amounts.deductFromOriginAcc())
+                    .build())
+                .ifPresent(errorMsg -> {
+                    transfer.setStatus(TransferStatus.FAILED);
+                    transferRepository.save(transfer);
+                    throw new InsufficientBalanceException(errorMsg);
+                });
+
+        TransferStatus transferStatus = TransferStatus.SUCCESSFUL;
+        try {
+            accounts.originAccount().setBalance(accounts.originAccount().getBalance().subtract(amounts.deductFromOriginAcc()));
+            accounts.recipientAccount().setBalance(accounts.recipientAccount().getBalance().add(amounts.creditToRecipientAcc()));
+            accountRepository.save(accounts.originAccount());
+            accountRepository.save(accounts.recipientAccount());
+            transfer.setAmountTransferredFromOriginAcc(amounts.deductFromOriginAcc);
+            transfer.setAmountTransferredToRecipientAcc(amounts.creditToRecipientAcc);
+        } catch (Exception e) {
+            log.error("Unable to perform transfer.", e);
+            transferStatus = TransferStatus.FAILED;
+            throw e;
+        } finally {
+            transfer.setStatus(transferStatus);
+            transferRepository.save(transfer);
+        }
+
+        return new MakeTransferResultDto(accounts.originAccount().getBalance(), accounts.recipientAccount().getBalance());
+    }
+
+    private Accounts getOriginAndDestinationAccounts(MakeTransferRequestDto input) {
         Account originAccount = getAccountByUuidUC.execute(input.getOriginAccountUUID());
         Account recipientAccount = getAccountByUuidUC.execute(input.getRecipientAccountUUID());
+        return new Accounts(originAccount, recipientAccount);
+    }
 
-        String originCurrency = originAccount.getCurrency();
-        String recipientCurrency = recipientAccount.getCurrency();
-
+    private Amounts getAmounts(MakeTransferRequestDto input, String originCurrency, String recipientCurrency) {
         boolean differentCurrencies = !originCurrency.equals(recipientCurrency);
         BigDecimal deductFromOriginAcc;
         BigDecimal creditToRecipientAcc;
@@ -60,25 +98,9 @@ public class MakeTransferUseCase implements UseCase<MakeTransferRequestDto, Make
             deductFromOriginAcc = input.getAmount();
             creditToRecipientAcc = input.getAmount();
         }
-
-        log.info("Validating account balance...");
-        balanceValidator.validate(BalanceValidationDto.builder()
-                    .account(originAccount)
-                    .transferAmount(deductFromOriginAcc)
-                    .build())
-                .ifPresent(errorMsg -> {
-                    throw new InsufficientBalanceException(errorMsg);
-                });
-
-        originAccount.setBalance(originAccount.getBalance().subtract(deductFromOriginAcc));
-        recipientAccount.setBalance(recipientAccount.getBalance().add(creditToRecipientAcc));
-
-        Transfer transfer = transferMapper.makeTransferDtoToTransfer(recipientAccount, originAccount);
-
-        accountRepository.save(originAccount);
-        accountRepository.save(recipientAccount);
-        transferRepository.save(transfer);
-
-        return new MakeTransferResultDto(originAccount.getBalance(), recipientAccount.getBalance());
+        return new Amounts(deductFromOriginAcc, creditToRecipientAcc);
     }
+
+    private record Accounts(Account originAccount, Account recipientAccount) {}
+    private record Amounts(BigDecimal deductFromOriginAcc, BigDecimal creditToRecipientAcc) {}
 }
