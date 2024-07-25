@@ -15,4 +15,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Lock(LockModeType.PESSIMISTIC_READ)
     @QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "5000")})
     Optional<Account> findByUuid(UUID uuid);
+
+    Optional<Account> findByOwnerUuid(UUID ownerUuid);
 }

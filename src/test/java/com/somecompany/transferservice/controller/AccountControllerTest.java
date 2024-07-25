@@ -42,7 +42,7 @@ public class AccountControllerTest {
 
     @Test
     void accountCreationSuccess() throws Exception {
-        String requestBody = Files.readString(Path.of("src/test/resources/requests/account-creation-good-request.json"), StandardCharsets.UTF_8);
+        String requestBody = Files.readString(Path.of("src/test/resources/requests/account-creation-good-request-1.json"), StandardCharsets.UTF_8);
         String responseBody = Files.readString(Path.of("src/test/resources/responses/account-creation-success-response.json"), StandardCharsets.UTF_8);
 
         when(uc.execute(argThat(creationDto ->

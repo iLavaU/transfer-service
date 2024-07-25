@@ -33,7 +33,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {
             CurrencyNotListedInAPIException.class,
-            InsufficientBalanceException.class
+            InsufficientBalanceException.class,
+            AccountForOwnerAlreadyExistent.class
     })
     public ResponseEntity<ClientErrorResponseDto> handleInsufficientBalanceException(Exception ex, WebRequest request) {
         ClientErrorResponseDto clientErrorResponseDto = new ClientErrorResponseDto();

@@ -65,7 +65,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    @Profile("local")
+    @Profile(value = {"local", "dev"}) //Remove dev if needed.
     public EmbeddedKafkaBroker broker() {
         Map<String, String> properties = new HashMap<>();
         properties.put("listeners", "PLAINTEXT://localhost:9092,REMOTE://10.0.0.20:9093");

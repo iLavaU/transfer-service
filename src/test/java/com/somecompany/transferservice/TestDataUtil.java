@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 
 public class TestDataUtil {
@@ -26,13 +28,41 @@ public class TestDataUtil {
     public  UUID TEST_ACCOUNT_2_UUID = UUID.fromString("7722b9dc-d734-4ce4-b13d-9ed7b1fbda57");
     public Account TEST_ACCOUNT_OWNER_2 = createTestAccountOwner2();
 
-
     public OpenExchangeRatesLatestDto OER_RESULT_DTO = createOerResultDto();
     public BigDecimal AMOUNT = BigDecimal.valueOf(1);
     public BigDecimal EURToUSD = OER_RESULT_DTO.rates().get("EUR");
     public BigDecimal GBPToUSD = OER_RESULT_DTO.rates().get("GBP");
     public BigDecimal GBPToEUR_AMOUNT = AMOUNT.divide(GBPToUSD, MathContext.DECIMAL64).multiply(EURToUSD);
     public BigDecimal EURToGBP_AMOUNT = AMOUNT.divide(EURToUSD, MathContext.DECIMAL64).multiply(GBPToUSD);
+
+
+    public static final String ownerCreationReq1;
+    public static final String ownerCreationReq2;
+    public static final String OERResponse;
+
+    static {
+        try {
+            ownerCreationReq1 = Files.readString(Path.of("src/test/resources/requests/owner-creation-req-1.json"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static {
+        try {
+            ownerCreationReq2 = Files.readString(Path.of("src/test/resources/requests/owner-creation-req-2.json"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static {
+        try {
+            OERResponse = Files.readString(Path.of("src/test/resources/responses/oerlatest-response.json"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private Owner createTestOwner1() {
         Owner owner = new Owner();

@@ -1,6 +1,7 @@
 package com.somecompany.transferservice.service.impl;
 
 import com.somecompany.transferservice.dto.response.AccountCreationDto;
+import com.somecompany.transferservice.exception.AccountForOwnerAlreadyExistent;
 import com.somecompany.transferservice.mapper.AccountMapper;
 import com.somecompany.transferservice.model.Account;
 import com.somecompany.transferservice.model.Owner;
@@ -21,6 +22,9 @@ public class CreateAccountUseCase implements UseCase<AccountCreationDto, Account
     @Override
     @Transactional
     public Account execute(AccountCreationDto input) {
+        accountRepository.findByOwnerUuid(input.ownerUuid()).ifPresent(account -> {
+            throw new AccountForOwnerAlreadyExistent(input.ownerUuid());
+        });
         Owner owner = getOwnerByUuidUC.execute(input.ownerUuid());
         Account account = accountMapper.accountCreationDtoToAccount(input, owner);
         return accountRepository.save(account);
