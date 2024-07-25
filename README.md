@@ -27,6 +27,19 @@ In a similar way, the services are injected in the [controllers](src/main/java/c
     <figcaption>Clean architecture diagram. Retrieved from <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">R. C. Martin’s Clean Architecture blog</a></figcaption>
 </figure>
 
+<h3>Currency conversion capabilities</h3>
+The service can transfer funds between 2 accounts with different currencies.
+It also allows to choose which currency to use when transferring, the recipient or the origin account's currency, with the query parameter _inOriginCurrency_ (which defaults to true).
+
+
+<h3>Make transfer: v1 and v2</h3>
+
+<ul>
+    <li><u>transfer/v1</u> performs synchronous transfers and fails if it cannot acquire a lock for the accounts involved, in a certain time interval.</li>
+    <li><u>transfer/v2</u> uses Kafka to perform asynchronous transfers and tends to be more reliable in terms of not failing due to deadlock errors.
+        Both local and dev environment use an embedded kafka broker, so there's no need to set this up externally for testing purposes.</li>
+</ul>
+
 <br>
 
 <div style="text-align: justify"> 
